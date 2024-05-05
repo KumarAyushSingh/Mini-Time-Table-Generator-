@@ -1,0 +1,67 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+class Course {
+public:
+  string name;
+  string teacher;
+
+  Course(string name, string teacher) {
+    this->name = name;
+    this->teacher = teacher;
+  }
+};
+
+bool isTeacherAvailable(vector<Course> timetable, string teacher, int day, int time) {
+  for (Course course : timetable) {
+    if (course.teacher == teacher && course.teacher.size() > 1) {
+      return false;
+    }
+  }
+  return true;
+}
+
+vector<Course> generateTimetable(vector<Course> courses, int numDays, int numTimeSlots) {
+  vector<Course> timetable(numDays * numTimeSlots);
+  int courseIndex = 0;
+
+  for (int day = 0; day < numDays; day++) {
+    for (int time = 0; time < numTimeSlots; time++) {
+      while (!isTeacherAvailable(timetable, courses[courseIndex].teacher, day, time)) {
+        courseIndex = (courseIndex + 1) % courses.size(); // Cycle through courses
+      }
+      timetable[day * numTimeSlots + time] = courses[courseIndex];
+      courseIndex = (courseIndex + 1) % courses.size(); // Move to next course
+    }
+  }
+
+  return timetable;
+}
+
+int main() {
+  vector<Course> courses = {
+      Course("Math", "Mr. Smith"),
+      Course("Science", "Mr. Johnson"),
+      Course("History", "Ms. Williams"),
+      Course("English", "Mr. Brown"),
+  };
+
+  int numDays = 5;
+  int numTimeSlots = 4;
+
+  vector<Course> timetable = generateTimetable(courses, numDays, numTimeSlots);
+
+  for (int day = 0; day < numDays; day++) {
+    cout << "Day " << day + 1 << endl;
+    for (int time = 0; time < numTimeSlots; time++) {
+      int index = day * numTimeSlots + time;
+      cout << timetable[index].name << " (" << timetable[index].teacher << ")" << endl;
+    }
+    cout << endl;
+  }
+
+  return 0;
+}
