@@ -8,17 +8,21 @@ class Course {
 public:
   string name;
   string teacher;
+  bool available;
 
-  Course(string name, string teacher) {
+  Course() : name(""), teacher(""), available(true) {}
+
+  Course(string name, string teacher, bool available = true) {
     this->name = name;
     this->teacher = teacher;
+    this->available = available;
   }
 };
 
 bool isTeacherAvailable(vector<Course> timetable, string teacher, int day, int time) {
   for (Course course : timetable) {
-    if (course.teacher == teacher && course.teacher.size() > 1) {
-      return false;
+    if (course.teacher == teacher) {
+      return course.available;
     }
   }
   return true;
@@ -31,10 +35,10 @@ vector<Course> generateTimetable(vector<Course> courses, int numDays, int numTim
   for (int day = 0; day < numDays; day++) {
     for (int time = 0; time < numTimeSlots; time++) {
       while (!isTeacherAvailable(timetable, courses[courseIndex].teacher, day, time)) {
-        courseIndex = (courseIndex + 1) % courses.size(); // Cycle through courses
+        courseIndex = (courseIndex + 1) % courses.size();
       }
       timetable[day * numTimeSlots + time] = courses[courseIndex];
-      courseIndex = (courseIndex + 1) % courses.size(); // Move to next course
+      courseIndex = (courseIndex + 1) % courses.size();
     }
   }
 
@@ -43,14 +47,14 @@ vector<Course> generateTimetable(vector<Course> courses, int numDays, int numTim
 
 int main() {
   vector<Course> courses = {
-      Course("Math", "Mr. Smith"),
-      Course("Science", "Mr. Johnson"),
-      Course("History", "Ms. Williams"),
-      Course("English", "Mr. Brown"),
+    Course("Math", "Mr. Smith", true),
+    Course("Science", "Mr. Johnson", true),
+    Course("History", "Ms. Williams", true),
+    Course("English", "Mr. Brown", true),
   };
 
-  int numDays = 5;
-  int numTimeSlots = 4;
+  int numDays = 2;
+  int numTimeSlots =3;
 
   vector<Course> timetable = generateTimetable(courses, numDays, numTimeSlots);
 
